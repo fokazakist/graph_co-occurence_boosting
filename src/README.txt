@@ -1,4 +1,4 @@
-This package is gBoost with wildcards without cashing.
+This package is gBoost with wildcards with cashing.
 
 need to use:
 c++ library, boost
