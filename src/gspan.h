@@ -178,8 +178,8 @@ class Gspan {
   list<Ctree*> search_nodes;
   unsigned int TNnum;
   void Crun(); 
-  void coocrun();
-  void cooc_bef_cashrun()
+  void coocsearch(GraphToTracers&,Ctree&);
+  void coocsearch();
 };
 
 Graph toGraph(vector<DFSCode>&);

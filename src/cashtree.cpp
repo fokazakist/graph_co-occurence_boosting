@@ -142,3 +142,9 @@ void Gspan::first_tree_make(){
   }
   std::cout << p_count << std::endl;
 }
+
+void Gspan::coocsearch(){
+  //this function is start position to search cooc pattern
+  
+
+}

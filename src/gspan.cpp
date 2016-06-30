@@ -329,7 +329,6 @@ const vector<Graph> readGraphs(std::istream &is) {
   return graphs;
 }
 
-
 Graph toGraph(vector<DFSCode>& codes){
   Graph g;
   Edge edge;
@@ -387,7 +386,6 @@ bool Gspan::can_prune(GraphToTracers& g2tracers){
   }
   return false;
 }
-
 
 void Gspan::edge_grow(Ctree& node){
  
