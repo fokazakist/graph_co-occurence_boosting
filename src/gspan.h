@@ -192,6 +192,7 @@ class Gspan {
   bool cooc_tsearch(GraphToTracers&,Ctree&,GraphToTracers&,Ctree&);
   bool cooc_is_opt;
   void coocsearch();
+  bool need_to_cooc;
   //only_cooc_search()
 };
 

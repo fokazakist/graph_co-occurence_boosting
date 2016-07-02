@@ -111,8 +111,8 @@ void Gspan::lpboost(){
   wbias=0.0;
   Hypothesis model;
   first_flag=true;
+  need_to_cooc = false;
   
-
   std::cout.setf(std::ios::fixed,std::ios::floatfield);
   std::cout.precision(8);
   //Initialize GLPK
@@ -143,21 +143,33 @@ void Gspan::lpboost(){
   //main loop
   for(unsigned int itr=0;itr < max_itr;++itr){
     std::cout <<"itrator : "<<itr+1<<std::endl;
+    if(itr==324) need_to_cooc=true;
     opt_pat.gain=0.0;//gain init
     opt_pat.size=0;
     opt_pat.locsup.resize(0);
     pattern.resize(0);
     opt_pat.dfscode="";
     Crun();
-    std::cout<<opt_pat.gain<<"  :"<<opt_pat.dfscode<<std::endl;
+    //std::cout<<opt_pat.gain<<"  :"<<opt_pat.dfscode<<std::endl;
     std::vector <int>     result (gnum);
-    int _y = opt_pat.gain > 0 ? +1 :-1;
+    int _y;
+    vector<int> locvec;
+    std::string dfscode;
+    if(cooc_is_opt == false){
+      _y = opt_pat.gain > 0 ? +1 :-1;
+      locvec =opt_pat.locsup;
+      dfscode=opt_pat.dfscode;
+    }else{
+      _y = opt_pat_cooc.gain > 0 ? +1 :-1;
+      locvec =opt_pat_cooc.locsup;
+      dfscode=opt_pat_cooc.dfscode[0]+"*******"+opt_pat_cooc.dfscode[1];//=opt_pat_cooc.dfscode;
+    }
     model.flag.resize(itr+1);
     model.flag[itr]=_y;
 
     std::fill (result.begin (), result.end(), -_y);
       
-    for (unsigned int i = 0; i < opt_pat.locsup.size(); ++i) result[opt_pat.locsup[i]] = _y;
+    for (unsigned int i = 0; i < locvec.size(); ++i) result[locvec[i]] = _y;
     double uyh = 0;
     for (unsigned int i = 0; i < gnum;  ++i) { // summarizing hypotheses
       uyh += weight[i]*corlab[i]*result[i];
@@ -183,7 +195,7 @@ void Gspan::lpboost(){
     lpx_set_row_bnds(lp, ROW(itr+1), LPX_UP, 0.0, 0.0);
 
     model.weight.push_back(0);
-    model.dfs_vector.push_back(opt_pat.dfscode);
+    model.dfs_vector.push_back(dfscode);
       
     lpx_simplex(lp); 
     beta = lpx_get_obj_val(lp);

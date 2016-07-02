@@ -156,10 +156,11 @@ void Gspan::coocsearch(){
     dcode = (*it)->pattern[(*it)->pattern.size()-1];
     gcalc_tsearch(croot->heap[dcode.labels],**it);
   }
-
-  for(list<Ctree*>::iterator it=croot->one_edge_graphs.begin();it!=croot->one_edge_graphs.end();++it){
-    dcode = (*it)->pattern[(*it)->pattern.size()-1];
-    cooc_tsearch(croot->heap[dcode.labels],**it);
+  if(need_to_cooc ==true){
+    for(list<Ctree*>::iterator it=croot->one_edge_graphs.begin();it!=croot->one_edge_graphs.end();++it){
+      dcode = (*it)->pattern[(*it)->pattern.size()-1];
+      cooc_tsearch(croot->heap[dcode.labels],**it);
+    }
   }
 
 
@@ -301,7 +302,7 @@ bool Gspan::cooc_tsearch(GraphToTracers& base_g2tracers,Ctree& base,GraphToTrace
       opt_pat_cooc.size_sum = cand.pattern.size() + base.pattern.size();
       opt_pat_cooc.locsup.clear();
       opt_pat_cooc.locsup=loctemp;
-      
+      cooc_is_opt=true;
       std::ostrstream ostrs1;
       ostrs1 <<cand.pattern;
       ostrs1 << std::ends;
