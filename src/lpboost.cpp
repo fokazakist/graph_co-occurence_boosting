@@ -144,7 +144,7 @@ void Gspan::lpboost(){
   //main loop
   for(unsigned int itr=0;itr < max_itr;++itr){
     std::cout <<"itrator : "<<itr+1<<std::endl;
-    if(itr==200) need_to_cooc=true;
+    //if(itr==200) need_to_cooc=true;
     opt_pat.gain=0.0;//gain init
     opt_pat.size=0;
     opt_pat.locsup.resize(0);
@@ -182,7 +182,8 @@ void Gspan::lpboost(){
       std::cout << "*********************************" << std::endl;
       std::cout << "Convergence ! at iteration: " << itr+1 << std::endl;
       std::cout << "*********************************" << std::endl;
-      break;
+      if(need_to_cooc == true) break;
+      need_to_cooc = true;
     }
       
     lpx_add_rows(lp,1); // Add one row constraint s.t. sum( uyh - beta ) <= 0

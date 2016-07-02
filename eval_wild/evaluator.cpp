@@ -227,10 +227,10 @@ int main(int argc, char **argv) {
    float cor = 0, err = 0;
    
    for(unsigned i=0; i<f.gdata.size(); ++i){
-     //std::cout << "GRAPH #" << i+1 << " (" << gsave[i].size() << ")" << std::endl;
+     std::cout << "GRAPH #" << i+1 << " (" << gsave[i].size() << ")" << std::endl;
      float sum = f.bias;
      for(set<int>::iterator itr = gsave[i].begin(); itr != gsave[i].end(); ++itr){
-       //std::cout << "   alpha[i]=" << f.coeff[*itr] << " i=" << *itr << std::endl; 
+       std::cout << "   alpha[i]=" << f.coeff[*itr] << " i=" << *itr << std::endl; 
        sum += 2*f.coeff[*itr]/f.alphasum;
      }
      for(map<Pair,float>::iterator itr = f.cooceff.begin();itr!=f.cooceff.end();++itr){
@@ -244,23 +244,19 @@ int main(int argc, char **argv) {
      ofs << f.gdata[i].value<< "\t" << sum  << std::endl;
      if (sum >= 0 && f.gdata[i].value > 0 ){
        cor += 1;
-       //std::cout << "res + g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
+       std::cout << "res + g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
      }else if (sum < 0 && f.gdata[i].value < 0 ){
        cor += 1;
-       //std::cout << "res + g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
+       std::cout << "res + g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
      }else if (sum >= 0 && f.gdata[i].value < 0 ){
        err += 1;
-       //std::cout << "res - g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
+       std::cout << "res - g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
      }else{
        err += 1;
-       //std::cout << "res - g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
+       std::cout << "res - g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
      }
    }
    std::cout << "---" << std::endl;
    std::cout << "correct:" << cor << " wrong:" << err << "  " << cor/(cor+err) << std::endl;
   return 0;
 }
-
-
-//  
-
