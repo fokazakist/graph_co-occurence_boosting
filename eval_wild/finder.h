@@ -174,10 +174,10 @@ template<typename T> void Finder::read_features(T& ins){
 
     val = atof(tmp.c_str());
     dfscode = boost::algorithm::join(vec, " ");
-
-    bias -= val;
-    alphasum += std::abs(val);
-
+    if(val > 100){
+      bias -= val;
+      alphasum += std::abs(val);
+    }
     vg.clear();
     if(fdic.find(dfscode)==fdic.end()){
       feature[gcount] = dfscode;

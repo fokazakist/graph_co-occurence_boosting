@@ -230,6 +230,7 @@ int main(int argc, char **argv) {
      std::cout << "GRAPH #" << i+1 << " (" << gsave[i].size() << ")" << std::endl;
      float sum = f.bias;
      for(set<int>::iterator itr = gsave[i].begin(); itr != gsave[i].end(); ++itr){
+       if(f.coeff[1+*itr]>10)
        std::cout << "   alpha[i]=" << f.coeff[*itr] << " i=" << *itr << std::endl; 
        sum += 2*f.coeff[*itr]/f.alphasum;
      }

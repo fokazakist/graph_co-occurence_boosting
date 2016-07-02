@@ -162,7 +162,7 @@ void Gspan::lpboost(){
     }else{
       _y = opt_pat_cooc.gain > 0 ? +1 :-1;
       locvec =opt_pat_cooc.locsup;
-      dfscode=opt_pat_cooc.dfscode[0]+"*******"+opt_pat_cooc.dfscode[1];//=opt_pat_cooc.dfscode;
+      dfscode=opt_pat_cooc.dfscode[0]+"\n"+"9999\t"+opt_pat_cooc.dfscode[1];//=opt_pat_cooc.dfscode;
     }
     model.flag.resize(itr+1);
     model.flag[itr]=_y;
