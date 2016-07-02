@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
        sum += 2*f.coeff[*itr]/f.alphasum;
      }
      for(map<Pair,float>::iterator itr = f.cooceff.begin();itr!=f.cooceff.end();++itr){
-       if(gsave[i].count(itr->first.a)==0) continue;
+       if(gsave[i].count(itr->first.a)!=0) continue;
        if(gsave[i].count(itr->first.b)==0) continue;
        std::cout << "   alpha[i]=" << itr->second << " i=" << itr->first.a<<","<<itr->first.b << std::endl; 
         sum += 2*itr->second/f.alphasum;

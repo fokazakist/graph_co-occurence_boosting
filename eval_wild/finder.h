@@ -201,12 +201,11 @@ template<typename T> void Finder::read_features(T& ins){
     }else{
       vector<int> cooc;
       cooc.resize(vec.size());
-      val = atof(tmp.c_str());
       string pat[1];
       int i = 0;
       while(vec.size()>0){
 	pat[0] = vec.front();
-	dfscode = boost::algorithm::join(pat, " ");
+	dfscode = pat[0];//boost::algorithm::join(pat, " ");
 	//std::cout<<dfscode<<std::endl;
 	vg.clear();
 	if(fdic.find(dfscode)==fdic.end()){

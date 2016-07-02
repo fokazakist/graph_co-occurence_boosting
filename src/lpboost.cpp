@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   int opt;
   int wildcard_num = 0;
   unsigned int maxitr = 500000;
-  double nu = 0.1; 
+  double nu = 0.4; 
   double conv_epsilon = 1e-2;
 
   bool onceflag = false;
@@ -182,7 +182,7 @@ void Gspan::lpboost(){
       std::cout << "*********************************" << std::endl;
       std::cout << "Convergence ! at iteration: " << itr+1 << std::endl;
       std::cout << "*********************************" << std::endl;
-      if(need_to_cooc == true) break;
+      if(false || need_to_cooc == true) break;
       need_to_cooc = true;
     }
       
