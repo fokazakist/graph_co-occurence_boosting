@@ -112,6 +112,7 @@ void Gspan::lpboost(){
   Hypothesis model;
   first_flag=true;
   need_to_cooc = false;
+  cooc_is_opt = false;
   
   std::cout.setf(std::ios::fixed,std::ios::floatfield);
   std::cout.precision(8);
@@ -143,7 +144,7 @@ void Gspan::lpboost(){
   //main loop
   for(unsigned int itr=0;itr < max_itr;++itr){
     std::cout <<"itrator : "<<itr+1<<std::endl;
-    if(itr==324) need_to_cooc=true;
+    if(itr==200) need_to_cooc=true;
     opt_pat.gain=0.0;//gain init
     opt_pat.size=0;
     opt_pat.locsup.resize(0);
@@ -162,7 +163,7 @@ void Gspan::lpboost(){
     }else{
       _y = opt_pat_cooc.gain > 0 ? +1 :-1;
       locvec =opt_pat_cooc.locsup;
-      dfscode=opt_pat_cooc.dfscode[0]+"\n"+"9999\t"+opt_pat_cooc.dfscode[1];//=opt_pat_cooc.dfscode;
+      dfscode=opt_pat_cooc.dfscode[0]+"\t"+opt_pat_cooc.dfscode[1];//=opt_pat_cooc.dfscode;
     }
     model.flag.resize(itr+1);
     model.flag[itr]=_y;

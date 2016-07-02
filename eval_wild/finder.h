@@ -138,7 +138,15 @@ struct datapack {
   int seq;
   int label;
 };
-
+/*
+bool operator<(const Pair &a, const Pair &b){
+  if(a.a < b.a){
+    return true;
+  }else if(a.a==b.a && a.b < b.b){
+    return true;
+  }
+  return false;
+  }*/
 class Finder {
  public:
   unordered_map<int,string> g_tname;
@@ -152,6 +160,7 @@ class Finder {
   map<Triplet,GraphToTracers> gheap;
   patricia gpat_tree;
   patricia spat_tree;
+  map<Pair,float> cooceff;
   // member functions
   template<typename T> void read_graphs(T& ins);
   template<typename T> void read_features(T& ins);
@@ -168,28 +177,64 @@ template<typename T> void Finder::read_features(T& ins){
   float val;
   while( getline(ins,line) ){
     std::list<std::string> vec;
-    boost::split(vec, line, boost::is_any_of("\t "));
+    boost::split(vec, line, boost::is_any_of("\t"));
     tmp = vec.front();
     vec.pop_front();
-
     val = atof(tmp.c_str());
-    dfscode = boost::algorithm::join(vec, " ");
-    if(val > 100){
-      bias -= val;
-      alphasum += std::abs(val);
-    }
-    vg.clear();
-    if(fdic.find(dfscode)==fdic.end()){
-      feature[gcount] = dfscode;
-      fdic[dfscode]   = gcount;
-      coeff[gcount]   = val;
-      gtokenize(vg,dfscode);
-      gpat_tree.insert(vg,patricia::root,gcount);
-      //std::cout << "reading ... " << gcount << "(" << val << ") --> " << dfscode << std::endl;
-      gcount += 1;
+    bias -= val;
+    alphasum += std::abs(val);
+    //std::cout<<vec.size()<<std::endl;
+    if(vec.size()==1){
+      dfscode = boost::algorithm::join(vec, " ");
+      vg.clear();
+      if(fdic.find(dfscode)==fdic.end()){
+	feature[gcount] = dfscode;
+	fdic[dfscode]   = gcount;
+	coeff[gcount]   = val;
+	gtokenize(vg,dfscode);
+	gpat_tree.insert(vg,patricia::root,gcount);
+	gcount += 1;
+      }else{
+	int fid = fdic[dfscode];
+	coeff[fid] += val;
+      }
     }else{
-      int fid = fdic[dfscode];
-      coeff[fid] += val;
+      vector<int> cooc;
+      cooc.resize(vec.size());
+      val = atof(tmp.c_str());
+      string pat[1];
+      int i = 0;
+      while(vec.size()>0){
+	pat[0] = vec.front();
+	dfscode = boost::algorithm::join(pat, " ");
+	//std::cout<<dfscode<<std::endl;
+	vg.clear();
+	if(fdic.find(dfscode)==fdic.end()){
+	  feature[gcount] = dfscode;
+	  fdic[dfscode]   = gcount;
+	  coeff[gcount]   = 0;
+	  gtokenize(vg,dfscode);
+	  gpat_tree.insert(vg,patricia::root,gcount);
+	  cooc[i]=gcount;
+	  gcount += 1;
+	}else{
+	int fid = fdic[dfscode];
+	cooc[i]=fid;
+	}
+	++i;
+	vec.pop_front();
+      }
+      Pair p;
+      if(cooc[0] >= cooc[1]){
+	p.set(cooc[1],cooc[0]);
+      }else{
+	p.set(cooc[0],cooc[1]);
+      }
+      if(cooceff.find(p)==cooceff.end()){
+	cooceff[p]=val;
+      }else{
+	cooceff[p]+=val;
+      }
     }
   }
   bias /= alphasum;
