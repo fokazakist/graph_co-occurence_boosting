@@ -137,7 +137,6 @@ struct DPat{//discrimination pattern
 };
 struct CDPat{//co-occurence discrimination pattern
   vector<std::string> dfscode;//include string
-  unsigned int cooc_size;
   unsigned int size_sum;
   vector<int> locsup;
   double gain;
@@ -175,6 +174,7 @@ class Gspan {
   vector<double> corlab; 
   unsigned int max_itr;
   DPat opt_pat;
+  CDPat opt_pat_cooc;
   double wbias;
   double nu;
   double conv_epsilon;
@@ -188,7 +188,9 @@ class Gspan {
   list<Ctree*> search_nodes;
   unsigned int TNnum;
   void Crun(); 
-  void coocsearch(GraphToTracers&,Ctree&);
+  void cooc_tsearch(GraphToTracers&,Ctree&);
+  bool cooc_tsearch(GraphToTracers&,Ctree&,GraphToTracers&,Ctree&);
+  bool cooc_is_opt;
   void coocsearch();
   //only_cooc_search()
 };
