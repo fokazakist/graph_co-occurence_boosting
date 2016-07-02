@@ -20,7 +20,6 @@ void CRoot::print(){
       (*it)->print();
     }
 }
-
 void Tdelete(Ctree* tree){
   if(tree->children.size()!=0){
     for(list<Ctree*>::iterator it=tree->children.begin();it!=tree->children.end();++it){
@@ -37,13 +36,14 @@ void Gspan::Crun(){
     std::cout << TNnum <<std::endl;
     return;
   }
-
+  coocsearch();
+  /*
   DFSCode  dcode;
   for(list<Ctree*>::iterator it=croot->one_edge_graphs.begin();it!=croot->one_edge_graphs.end();++it){
     dcode = (*it)->pattern[(*it)->pattern.size()-1];
     cash_tsearch(croot->heap[dcode.labels],**it);
   }
-  std::cout << TNnum <<std::endl;
+  */
 }
 
 void Gspan::cash_tsearch(GraphToTracers& g2tracers,Ctree& node){
@@ -145,6 +145,65 @@ void Gspan::first_tree_make(){
 
 void Gspan::coocsearch(){
   //this function is start position to search cooc pattern
-  
+  DFSCode  dcode;
+  for(list<Ctree*>::iterator it=croot->one_edge_graphs.begin();it!=croot->one_edge_graphs.end();++it){
+    dcode = (*it)->pattern[(*it)->pattern.size()-1];
+    gcalc_tsearch(croot->heap[dcode.labels],**it);
+  }
 
+}
+void Gspan::gcalc_tsearch(GraphToTracers& g2tracers,Ctree& node){
+
+  double gain=0.0;
+  double upos=0.0;
+  double uneg=0.0;
+  gain=-wbias;
+  upos=-wbias;
+  uneg=wbias;
+
+  for(GraphToTracers::iterator it=g2tracers.begin();it!=g2tracers.end();++it){
+    int gid = it->first;
+    gain += 2 * corlab[gid] * weight[gid];
+    if(corlab[gid]>0){
+      upos += 2 * weight[gid];
+	}else{
+      uneg += 2 * weight[gid];
+    }
+  }
+  node.gain = gain;
+  node.max_gain = std::max(upos,uneg);
+
+  if(fabs(opt_pat.gain)-node.max_gain>=-1e-10) {
+    return;
+  }
+
+  double gain_abs = fabs(gain);
+  if(gain_abs > fabs(opt_pat.gain) || (fabs(gain_abs - fabs(opt_pat.gain)) < 1e-10 && node.pattern.size() < opt_pat.size)){
+    opt_pat.gain = gain;
+    opt_pat.size = node.pattern.size();
+    opt_pat.locsup.clear();
+    for(GraphToTracers::iterator it=g2tracers.begin();it!=g2tracers.end();++it){
+      opt_pat.locsup.push_back(it->first);
+    }
+    std::ostrstream ostrs;
+    ostrs <<node.pattern;
+    ostrs << std::ends;
+    opt_pat.dfscode = ostrs.str();
+  }
+  if(node.children.size()==0){
+    edge_grow(node);
+    return;
+  }
+  DFSCode  dcode;
+  Pair pkey;
+  for(list<Ctree*>::iterator it=node.children.begin();it!=node.children.end();++it){
+    dcode = (*it)->pattern[(*it)->pattern.size()-1];
+    if(dcode.labels.z == -1){
+      pkey.set(dcode.time.b,dcode.labels.y);
+      cash_tsearch(node.b_heap[pkey],**it);
+    }else{
+      pkey.set(dcode.labels.y,dcode.labels.z);
+      cash_tsearch(node.f_heap[dcode.time.a][pkey],**it);
+    }
+  }
 }

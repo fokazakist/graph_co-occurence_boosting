@@ -110,6 +110,8 @@ struct Ctree {
 public:
   vector<DFSCode> pattern;
   GraphToTracers g2tracers;
+  double gain;
+  double max_gain;
   PairSorter b_heap;
   map<int,PairSorter,greater<int> > f_heap;
   list<Ctree*> children;
@@ -133,7 +135,13 @@ struct DPat{//discrimination pattern
   vector<int> locsup;
   double gain;
 };
-
+struct CDPat{//co-occurence discrimination pattern
+  vector<std::string> dfscode;//include string
+  unsigned int cooc_size;
+  unsigned int size_sum;
+  vector<int> locsup;
+  double gain;
+};
 class Gspan {
  private:
   bool is_min();
@@ -160,6 +168,7 @@ class Gspan {
   void report(GraphToTracers&);
   void first_tree_make();
   void cash_tsearch(GraphToTracers&,Ctree&);
+  void gcalc_tsearch(GraphToTracers&,Ctree&);
 
   //lpboost
   vector<double> weight;
@@ -170,6 +179,7 @@ class Gspan {
   double nu;
   double conv_epsilon;
   bool can_prune(GraphToTracers&);
+  bool can_prune(GraphToTracers&,Ctree&);
   void lpboost();
 
   //cashing
@@ -180,6 +190,7 @@ class Gspan {
   void Crun(); 
   void coocsearch(GraphToTracers&,Ctree&);
   void coocsearch();
+  //only_cooc_search()
 };
 
 Graph toGraph(vector<DFSCode>&);

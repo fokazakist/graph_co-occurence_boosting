@@ -491,7 +491,7 @@ void Gspan::edge_grow(GraphToTracers& g2tracers, Ctree& pre){
   map<int,PairSorter,greater<int> >& f_heap = node->f_heap;
   int maxtoc = scan_gspan(g2tracers,b_heap,f_heap);
   node->wildcard_res=wildcard_r;
-  if(can_prune(g2tracers)) {
+  if(can_prune(g2tracers,*node)) {
     if(wild_flag == 1){
       wildcard_r++;
       wild_flag = 0;
@@ -521,4 +521,43 @@ void Gspan::edge_grow(GraphToTracers& g2tracers, Ctree& pre){
     wildcard_r++;
     wild_flag = 0;
   }
+}
+
+bool Gspan::can_prune(GraphToTracers& g2tracers,Ctree& node){
+
+  double gain=0.0;
+  double upos=0.0;
+  double uneg=0.0;
+
+  gain=-wbias;
+  upos=-wbias;
+  uneg=wbias;
+
+  for(GraphToTracers::iterator it=g2tracers.begin();it!=g2tracers.end();++it){
+    int gid = it->first;
+    gain += 2 * corlab[gid] * weight[gid];
+    if(corlab[gid]>0){
+      upos += 2 * weight[gid];
+	}else{
+      uneg += 2 * weight[gid];
+    }
+  }
+  node.gain=gain;
+  node.max_gain = std::max(upos,uneg);
+
+  if(fabs(opt_pat.gain) - node.max_gain >=-1e-10 ) return true;
+  double gain_abs = fabs(gain);
+  if(gain_abs > fabs(opt_pat.gain) || (fabs(gain_abs - fabs(opt_pat.gain))<1e-10 && pattern.size() < opt_pat.size)){
+    opt_pat.gain = gain;
+    opt_pat.size = pattern.size();
+    opt_pat.locsup.clear();
+    for(GraphToTracers::iterator it=g2tracers.begin();it!=g2tracers.end();++it){
+      opt_pat.locsup.push_back(it->first);
+    }
+    std::ostrstream ostrs;
+    ostrs <<pattern;
+    ostrs << std::ends;
+    opt_pat.dfscode = ostrs.str();
+  }
+  return false;
 }
