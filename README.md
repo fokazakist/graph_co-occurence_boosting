@@ -17,5 +17,6 @@ $ make
 $ cd ..
 
 - How to use
-$./lpboost -m (minsup) -w (wildcard num) traindata
-$./eval_wild  model testdata 
+$./lpboost [-m minsup] [-x maxpat] [-w wildcard] [-n v] [-e conv_epsilon] [-c coocitr] [-o] TrainingFile
+
+$./eval_wild  model TestFile
