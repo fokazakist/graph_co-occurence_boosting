@@ -4,11 +4,10 @@ This package is graph lpboost with co-occurence patterns and wildcard patterns
 
 1. Prepare  
 First compile libraries GLPK, then  
-
-need to use:
-c++ library, boost
--->install on Ubuntu
-     sudo apt-get install libboost-dev
+need to use:  
+c++ library, boost  
+-->install on Ubuntu  
+     sudo apt-get install libboost-dev  
 
 2. How to compile  
 How to make:  
