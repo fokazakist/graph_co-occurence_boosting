@@ -7,7 +7,7 @@
 extern "C" {
 #include "../../glpk-4.8/include/glpk.h"
 }
-#define OPT " [-m minsup] [-x maxpat] [-i] graph-file"
+#define OPT " [-m minsup] [-x maxpat] [-w wildcard] [-n v] [-e conv_epsilon] [-c coocitr] [-o] graph-file"
 #define ROW(i) ((i)+1)
 #define COL(j) ((j)+1)
 
@@ -22,12 +22,13 @@ int main(int argc, char **argv) {
   unsigned int maxitr = 500000;
   double nu = 0.4; 
   double conv_epsilon = 1e-2;
-
+  unsigned int coocitr = maxitr;
+  bool end_of_cooc = false;
   bool onceflag = false;
 
   clock_t allstart, allend;
 
-  while ((opt = getopt(argc, argv, "m:p:w:x:i")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:w:e:oc:n:x:i")) != -1) {
     switch (opt) {
     case 'm':
       minsup = atoi (optarg);
@@ -35,6 +36,18 @@ int main(int argc, char **argv) {
     case 'p':
       minp = atoi (optarg);
       percent = true;
+      break;
+    case 'n':
+      nu = atof(optarg);
+      break;
+    case 'c':
+      coocitr = atoi(optarg);
+      break;
+    case 'e':
+      conv_epsilon = atof(optarg);
+      break;
+    case 'o':
+      end_of_cooc = true;
       break;
     case 'x':
       maxpat = atoi (optarg);
@@ -71,6 +84,8 @@ int main(int argc, char **argv) {
   gspan.minsup = minsup;
   gspan.nu = nu;
   gspan.conv_epsilon = conv_epsilon;
+  gspan.coocitr = coocitr;
+  gspan.end_of_cooc = end_of_cooc;
   if(percent==true){
     gspan.minsup = gspan.gdata.size() * minp * 0.9 /100;
     //std::cout<<gspan.minsup<<std::endl;
@@ -144,7 +159,7 @@ void Gspan::lpboost(){
   //main loop
   for(unsigned int itr=0;itr < max_itr;++itr){
     std::cout <<"itrator : "<<itr+1<<std::endl;
-    //if(itr==200) need_to_cooc=true;
+    if(itr==coocitr) need_to_cooc=true;
     opt_pat.gain=0.0;//gain init
     opt_pat.size=0;
     opt_pat.locsup.resize(0);
@@ -182,7 +197,7 @@ void Gspan::lpboost(){
       std::cout << "*********************************" << std::endl;
       std::cout << "Convergence ! at iteration: " << itr+1 << std::endl;
       std::cout << "*********************************" << std::endl;
-      if(false || need_to_cooc == true) break;
+      if(!end_of_cooc || need_to_cooc == true) break;
       need_to_cooc = true;
     }
       

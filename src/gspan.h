@@ -177,7 +177,9 @@ class Gspan {
   CDPat opt_pat_cooc;
   double wbias;
   double nu;
+  unsigned int coocitr;
   double conv_epsilon;
+  bool end_of_cooc;
   bool can_prune(GraphToTracers&);
   bool can_prune(GraphToTracers&,Ctree&);
   void lpboost();
