@@ -12,7 +12,7 @@ gspan: gspan.o
 	${CXX} ${LDFLAGS} -o ${TARGETS} ${OBJ}  ${LDFLAGS}
 
 lpboost: lpboost.o ${OBJ}
-	${CXX} ${CXXFLAGS} -o ${TARGETS} ${OBJ} lpboost.o ${LDFLAGS} -I../glpk-4.8/include/ ../glpk-4.8/src/libglpk.a
+	${CXX} ${CXXFLAGS} -o ${TARGETS} ${OBJ} lpboost.o ${LDFLAGS} -I../../glpk-4.8/include/ ../../glpk-4.8/src/libglpk.a
 
 clean:
 	rm -f ${OBJ} lpboost.o ${TARGETS} *~

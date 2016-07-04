@@ -166,6 +166,7 @@ void Gspan::coocsearch(){
 
 
 }
+
 void Gspan::gcalc_tsearch(GraphToTracers& g2tracers,Ctree& node){
 
   double gain=0.0;
@@ -254,12 +255,23 @@ void Gspan::cooc_tsearch(GraphToTracers& g2tracers,Ctree& node){
 
 bool Gspan::cooc_tsearch(GraphToTracers& base_g2tracers,Ctree& base,GraphToTracers& cand_g2tracers,Ctree& cand){
   if(base.pattern == cand.pattern) return true;
+
+  double cgain;
+  if(cooc_is_opt == true){
+    cgain = abs(opt_pat_cooc.gain);
+  }else{
+    cgain = fabs(opt_pat.gain);
+  }
+  if(cgain-cand.max_gain>=-1e-10)  return false;
+
   bool ancestor = true;
   //for(vector<DFSCode>::iterator it = cand.pattern.begin();it != cand.pattern.end();++it){
   for(unsigned int i = 0;i!=cand.pattern.size();++i){
-    if(cand.pattern[i] != base.pattern[i]){
+    if(cand.pattern[i] < base.pattern[i]){
       ancestor = false;
       break;
+    }else if(base.pattern[i] < cand.pattern[i]){
+      return true;
     }
   }
   if(ancestor == false){
@@ -271,6 +283,7 @@ bool Gspan::cooc_tsearch(GraphToTracers& base_g2tracers,Ctree& base,GraphToTrace
     uneg=wbias;
     
     vector<int> loctemp;
+    loctemp.resize(0);
     GraphToTracers::iterator bit=base_g2tracers.begin();
     GraphToTracers::iterator cit=cand_g2tracers.begin();
     while(!(bit==base_g2tracers.end() || cit==cand_g2tracers.end())){
