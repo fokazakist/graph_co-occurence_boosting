@@ -105,6 +105,7 @@ public:
   vector<double> weight;
   vector<std::string> dfs_vector;
   vector<int> flag;
+  map<int,vector<int> > tmp;
   explicit Hypothesis(){
     weight.resize(0);
     dfs_vector.resize(0);
@@ -113,8 +114,8 @@ public:
 };
 
 void Gspan::lpboost(){
-  std::cout << "in lpboost" << std::endl;
   const char *out = "model";
+
   //initialize
   unsigned int gnum = gdata.size(); 
   weight.resize(gnum);
@@ -179,9 +180,17 @@ void Gspan::lpboost(){
       _y = opt_pat_cooc.gain > 0 ? +1 :-1;
       locvec =opt_pat_cooc.locsup;
       dfscode=opt_pat_cooc.dfscode[0]+"\t"+opt_pat_cooc.dfscode[1];//=opt_pat_cooc.dfscode;
+      
     }
+    std::cout<<"not cooc  "<<opt_pat.gain<<"  :"<<opt_pat.locsup.size()<<" *  "<<opt_pat.dfscode<<std::endl;
+    
+    if(cooc_is_opt){
+      std::cout<<"    cooc  "<<opt_pat_cooc.gain<<"  :"<<opt_pat_cooc.locsup.size()<<" *  "<<opt_pat_cooc.dfscode[0]+"\t"+opt_pat_cooc.dfscode[1]<<std::endl;
+    }
+    //std::cout<<locvec.size()<<std::endl;
     model.flag.resize(itr+1);
     model.flag[itr]=_y;
+    model.tmp[itr]=locvec;
 
     std::fill (result.begin (), result.end(), -_y);
       
@@ -243,15 +252,38 @@ void Gspan::lpboost(){
     }
     os.setf(std::ios::fixed,std::ios::floatfield);
     os.precision(12);
+
+
+    std::vector<float> pred(gnum);
+    std::fill (pred.begin (), pred.end(), 0.0);
     for (unsigned int r = 0; r < itr; ++r){
       model.weight[r] = - lpx_get_row_dual(lp, ROW(r+1));
       if(model.weight[r] < 0) model.weight[r] = 0; // alpha > 0
       os << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
-      std::cout << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
+      //std::cout << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
+      vector<int>::iterator it = model.tmp[r].begin();
+      for(unsigned int g=0;g!=gnum;++g){
+	if(*it==g){
+	  pred[g] += model.flag[r] * model.weight[r];
+	  ++it;
+	}else{
+	  pred[g] -= model.flag[r] * model.weight[r];
+	}
+      }
     }
-    std::cout << "After iteration " << itr+1 << std::endl;
-    std::cout << "Margin: " << margin << std::endl;
-    std::cout << "Margin Error: " << margin_error << std::endl;
+    std::cout<<"Prediction for training data :"<<pred.size()<<std::endl;
+    float acc = 0;
+    //for(vector<float>::iterator it = pred.begin();it != pred.end();++it){
+    for(unsigned int i=0;i!=gnum;++i){
+      //std::cout<<pred[i]<<std::endl;
+      if(corlab[i]*pred[i]>0){
+	++acc;
+      }
+    }
+    std::cout<<"Prediction for training data :"<<acc / gnum<<std::endl;
+    //std::cout << "After iteration " << itr+1 << std::endl;
+    //std::cout << "Margin: " << margin << std::endl;
+    //std::cout << "Margin Error: " << margin_error << std::endl;
   }
   std::cout << "end lpboost" << std::endl;
 

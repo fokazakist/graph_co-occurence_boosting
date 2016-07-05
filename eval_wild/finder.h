@@ -232,6 +232,7 @@ template<typename T> void Finder::read_features(T& ins){
       if(cooceff.find(p)==cooceff.end()){
 	cooceff[p]=val;
       }else{
+	std::cout << "!!!!!!!"<<val<<std::endl;
 	cooceff[p]+=val;
       }
     }
