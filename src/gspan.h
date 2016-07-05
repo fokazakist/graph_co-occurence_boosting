@@ -92,7 +92,15 @@ inline bool operator== (const DFSCode& left, const DFSCode& right){
 inline bool operator!= (const DFSCode& x, const DFSCode& y){
   return !(x==y);
 }
-
+inline bool operator< (const DFSCode& left, const DFSCode& right){
+  if(left.time.a != right.time.a) return left.time.a > right.time.a;
+  
+  if(left.time.b != right.time.b) return left.time.b < right.time.b;
+  
+  if(left.labels.x != right.labels.x) return left.labels < right.labels;
+  if(left.labels.y != right.labels.y) return left.labels.y < right.labels.y;
+  return (left.labels.z < right.labels.z);	
+}
 inline std::ostream& operator<< (std::ostream& os, const vector<DFSCode> pattern){
   if(pattern.empty()) return os;
   os << "(" << pattern[0].labels.x << ") " << pattern[0].labels.y << " (0f" << pattern[0].labels.z << ")";
