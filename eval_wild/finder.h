@@ -161,6 +161,7 @@ class Finder {
   patricia gpat_tree;
   patricia spat_tree;
   map<Pair,float> cooceff;
+  vector<vector<string> > fvec;
   // member functions
   template<typename T> void read_graphs(T& ins);
   template<typename T> void read_features(T& ins);
@@ -186,6 +187,8 @@ template<typename T> void Finder::read_features(T& ins){
     //std::cout<<vec.size()<<std::endl;
     if(vec.size()==1){
       dfscode = boost::algorithm::join(vec, " ");
+      fvec.resize(fvec.size()+1);
+      fvec[fvec.size()-1].push_back(dfscode);
       vg.clear();
       if(fdic.find(dfscode)==fdic.end()){
 	feature[gcount] = dfscode;
@@ -201,12 +204,14 @@ template<typename T> void Finder::read_features(T& ins){
     }else{
       vector<int> cooc;
       cooc.resize(vec.size());
+      fvec.resize(fvec.size()+1);
       string pat[1];
       int i = 0;
       while(vec.size()>0){
 	pat[0] = vec.front();
 	dfscode = pat[0];//boost::algorithm::join(pat, " ");
 	//std::cout<<dfscode<<std::endl;
+	fvec[fvec.size()-1].push_back(dfscode);
 	vg.clear();
 	if(fdic.find(dfscode)==fdic.end()){
 	  feature[gcount] = dfscode;

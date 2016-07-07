@@ -271,7 +271,7 @@ bool Gspan::cooc_tsearch(GraphToTracers& base_g2tracers,Ctree& base,GraphToTrace
     cgain = fabs(opt_pat.gain);
   }
   if(cgain-cand.max_gain>=-1e-10)  return ancestor;
-   
+
   if(ancestor == false){
     double gain=0.0;
     double upos=0.0;
@@ -314,6 +314,7 @@ bool Gspan::cooc_tsearch(GraphToTracers& base_g2tracers,Ctree& base,GraphToTrace
       opt_pat_cooc.size_sum = cand.pattern.size() + base.pattern.size();
       opt_pat_cooc.locsup.clear();
       opt_pat_cooc.locsup=loctemp;
+      opt_pat_cooc.dfscode.resize(0);
       cooc_is_opt=true;
       std::ostrstream ostrs1;
       ostrs1 <<cand.pattern;
@@ -325,6 +326,7 @@ bool Gspan::cooc_tsearch(GraphToTracers& base_g2tracers,Ctree& base,GraphToTrace
       opt_pat_cooc.dfscode.push_back(ostrs2.str());
     }
   }
+
 
   DFSCode  dcode;
   Pair pkey;

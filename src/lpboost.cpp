@@ -115,7 +115,7 @@ public:
 
 void Gspan::lpboost(){
   const char *out = "model";
-
+  const char *log = "model1";
   //initialize
   unsigned int gnum = gdata.size(); 
   weight.resize(gnum);
@@ -246,6 +246,7 @@ void Gspan::lpboost(){
       wbias += corlab[i] * weight[i];
     }
     std::ofstream os (out);
+    std::ofstream os1 (log);
     if (! os) {
       std::cerr << "FATAL: Cannot open output file: " << out << std::endl;
       return;
@@ -260,16 +261,19 @@ void Gspan::lpboost(){
       model.weight[r] = - lpx_get_row_dual(lp, ROW(r+1));
       if(model.weight[r] < 0) model.weight[r] = 0; // alpha > 0
       os << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
+      os1 <<model.dfs_vector[r]<<"\t";
       //std::cout << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
       vector<int>::iterator it = model.tmp[r].begin();
       for(unsigned int g=0;g!=gnum;++g){
-	if(*it==g){
+	if(*it==(int)g){
 	  pred[g] += model.flag[r] * model.weight[r];
+	  os1 << g <<",";
 	  ++it;
 	}else{
 	  pred[g] -= model.flag[r] * model.weight[r];
 	}
       }
+      os1<<std::endl;
     }
     std::cout<<"Prediction for training data :"<<pred.size()<<std::endl;
     float acc = 0;

@@ -224,6 +224,38 @@ int main(int argc, char **argv) {
    std::ofstream ofs(filename);
    ////std::cout << "gsave size: " << gsave.size() << std::endl;
 
+   std::ofstream ofs1("m1");
+
+   for(vector<vector<string> >::iterator p = f.fvec.begin();p !=f.fvec.end();++p){
+     if((*p).size()==1){
+       ofs1 <<(*p)[0]<<"\t";
+       int fid = f.fdic[(*p)[0]];
+       //std::cout << fid<<std::endl;
+       for(unsigned int i=0;i<f.gdata.size();++i){
+	 if(gsave[i].count(fid)==1){
+	   ofs1 << i<<",";
+	 }
+       }
+       ofs1 << std::endl;
+     }else{
+       ofs1 <<(*p)[0]<<"\t"<<(*p)[1]<<"\t";
+       int fid1,fid2;
+       fid1 = f.fdic[(*p)[0]];
+       fid2 = f.fdic[(*p)[1]];
+       
+       for(unsigned int i=0;i<f.gdata.size();++i){
+	 if(gsave[i].count(fid1)==1){
+	   if(gsave[i].count(fid2)==1){
+	     ofs1 << i<<",";
+	   }
+	 }
+       }
+       ofs1 << std::endl;
+       
+     }
+
+   }
+
    float cor = 0, err = 0;
    
    for(unsigned i=0; i<f.gdata.size(); ++i){
@@ -262,7 +294,9 @@ int main(int argc, char **argv) {
        std::cout << "res - g=" << i+1 << " p=" << sum << " y=" << f.gdata[i].value << std::endl;
      }
    }
+   
    std::cout << "---" << std::endl;
    std::cout << "correct:" << cor << " wrong:" << err << "  " << cor/(cor+err) << std::endl;
+   
   return 0;
 }
