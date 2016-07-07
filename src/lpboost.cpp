@@ -24,7 +24,6 @@ int main(int argc, char **argv) {
   double conv_epsilon = 1e-2;
   unsigned int coocitr = maxitr;
   bool end_of_cooc = false;
-  bool onceflag = false;
 
   clock_t allstart, allend;
 
@@ -88,14 +87,11 @@ int main(int argc, char **argv) {
   gspan.end_of_cooc = end_of_cooc;
   if(percent==true){
     gspan.minsup = gspan.gdata.size() * minp * 0.9 /100;
-    //std::cout<<gspan.minsup<<std::endl;
   }
-  //std::cout<<gspan.gdata.size()<<std::endl;
-  //gspan.run();
   gspan.lpboost();
   allend = clock();
   std::cout << "ALLTIME: " << (double)(allend - allstart)/(double)CLOCKS_PER_SEC << std::endl;
-  std::cout << "Given options::" << "maxpat: " << maxpat << " minsup: " << minsup << " nu: " << nu << " conv_epsilon: " << conv_epsilon << " maxitr: " << maxitr << " once flag: " << onceflag << std::endl;
+  std::cout << "Given options::" << "maxpat: " << maxpat << " minsup: " << minsup << " nu: " << nu << " conv_epsilon: " << conv_epsilon <<"cooc position: "<</*coocitr!=maxitr? coocitr:end_of_cooc?"after conv":"Not cooc"<<*/ " maxitr: " << maxitr << std::endl;
 
   return 0;
 }
@@ -115,7 +111,7 @@ public:
 
 void Gspan::lpboost(){
   const char *out = "model";
-  const char *log = "model1";
+  //const char *log = "model1";
   //initialize
   unsigned int gnum = gdata.size(); 
   weight.resize(gnum);
@@ -246,7 +242,7 @@ void Gspan::lpboost(){
       wbias += corlab[i] * weight[i];
     }
     std::ofstream os (out);
-    std::ofstream os1 (log);
+    //std::ofstream os1 (log);
     if (! os) {
       std::cerr << "FATAL: Cannot open output file: " << out << std::endl;
       return;
@@ -261,8 +257,9 @@ void Gspan::lpboost(){
       model.weight[r] = - lpx_get_row_dual(lp, ROW(r+1));
       if(model.weight[r] < 0) model.weight[r] = 0; // alpha > 0
       os << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
-      os1 <<model.dfs_vector[r]<<"\t";
+      //os1 <<model.dfs_vector[r]<<"\t";
       //std::cout << model.flag[r] * model.weight[r] << "\t" << model.dfs_vector[r] << std::endl;
+      /*
       vector<int>::iterator it = model.tmp[r].begin();
       for(unsigned int g=0;g!=gnum;++g){
 	if(*it==(int)g){
@@ -274,8 +271,10 @@ void Gspan::lpboost(){
 	}
       }
       os1<<std::endl;
+      */
     }
-    std::cout<<"Prediction for training data :"<<pred.size()<<std::endl;
+    //std::cout<<"Prediction for training data :"<<pred.size()<<std::endl;
+    /*
     float acc = 0;
     //for(vector<float>::iterator it = pred.begin();it != pred.end();++it){
     for(unsigned int i=0;i!=gnum;++i){
@@ -285,10 +284,9 @@ void Gspan::lpboost(){
       }
     }
     std::cout<<"Prediction for training data :"<<acc / gnum<<std::endl;
-    //std::cout << "After iteration " << itr+1 << std::endl;
-    //std::cout << "Margin: " << margin << std::endl;
-    //std::cout << "Margin Error: " << margin_error << std::endl;
+    */
+    std::cout << "After iteration " << itr+1 << std::endl;
+    std::cout << "Margin: " << margin << std::endl;
+    std::cout << "Margin Error: " << margin_error << std::endl;
   }
-  std::cout << "end lpboost" << std::endl;
-
 }

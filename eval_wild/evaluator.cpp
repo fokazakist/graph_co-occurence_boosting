@@ -223,7 +223,7 @@ int main(int argc, char **argv) {
    }
    std::ofstream ofs(filename);
    ////std::cout << "gsave size: " << gsave.size() << std::endl;
-
+   /*
    std::ofstream ofs1("m1");
 
    for(vector<vector<string> >::iterator p = f.fvec.begin();p !=f.fvec.end();++p){
@@ -253,16 +253,15 @@ int main(int argc, char **argv) {
        ofs1 << std::endl;
        
      }
-
    }
-
+   */
    float cor = 0, err = 0;
    
    for(unsigned i=0; i<f.gdata.size(); ++i){
      std::cout << "GRAPH #" << i+1 << " (" << gsave[i].size() << ")" << std::endl;
      float sum = f.bias;
      //std::cout << "   bias=" << sum << std::endl; 
-
+     
      for(set<int>::iterator itr = gsave[i].begin(); itr != gsave[i].end(); ++itr){
        std::cout << "   alpha[i]=" << f.coeff[*itr] << " i=" << *itr << std::endl; 
        sum += 2*f.coeff[*itr]/f.alphasum;
@@ -270,15 +269,15 @@ int main(int argc, char **argv) {
      for(map<Pair,float>::iterator itr = f.cooceff.begin();itr!=f.cooceff.end();++itr){
        //std::cout << "cooc val" << itr->second << " i=" << itr->first.a<<","<<itr->first.b << std::endl; 
        //std::cout << "occurence" << gsave[i].count(itr->first.a)<<gsave[i].count(itr->first.b) << std::endl; 
-       //if(gsave[i].count(itr->first.a)==0) {continue;}
-       //if(gsave[i].count(itr->first.b)==0) {continue;}
-       if(gsave[i].count(itr->first.a)==1 && gsave[i].count(itr->first.b)==1){
-	 std::cout << "   alpha[i]=" << itr->second << " i=" << itr->first.a<<","<<itr->first.b << std::endl; 
-	 sum += 2*itr->second/f.alphasum;
-       }
+       if(gsave[i].count(itr->first.a)==0) {continue;}
+       if(gsave[i].count(itr->first.b)==0) {continue;}
+       
+       std::cout << "   alpha[i]=" << itr->second << " i=" << itr->first.a<<","<<itr->first.b << std::endl; 
+       sum += 2*itr->second/f.alphasum;
      }
+     
      //std::cout << "   cooc_sum=" << f.cooceff.size() << std::endl; 
-
+     
      ofs << f.gdata[i].value<< "\t" << sum  << std::endl;
      if (sum >= 0 && f.gdata[i].value > 0 ){
        cor += 1;
