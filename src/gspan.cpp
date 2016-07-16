@@ -544,8 +544,9 @@ bool Gspan::can_prune(GraphToTracers& g2tracers,Ctree& node){
   }
   node.gain=gain;
   node.max_gain = std::max(upos,uneg);
-
-  if(fabs(opt_pat.gain) > node.max_gain  ) return true;
+  double f=fabs(opt_pat.gain);
+  //if(fabs(opt_pat.gain) - std::max(upos,uneg) >= 1e-10 ) return true;
+  if( std::max(upos,uneg) <f ) return true;
   double gain_abs = fabs(gain);
   if(gain_abs > fabs(opt_pat.gain) || (fabs(gain_abs - fabs(opt_pat.gain))<1e-10 && pattern.size() < opt_pat.size)){
     opt_pat.gain = gain;
