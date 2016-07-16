@@ -24,10 +24,10 @@ int main(int argc, char **argv) {
   double conv_epsilon = 1e-2;
   unsigned int coocitr = maxitr;
   bool end_of_cooc = false;
-
+  bool is_nomal = true;
   clock_t allstart, allend;
 
-  while ((opt = getopt(argc, argv, "m:p:w:e:oc:n:x:i")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:w:e:oc:n:x:ia")) != -1) {
     switch (opt) {
     case 'm':
       minsup = atoi (optarg);
@@ -57,6 +57,9 @@ int main(int argc, char **argv) {
     case 'i':
       out_instances = true;
       break;
+    case 'a':
+      is_nomal = false;
+      break;
     default:
       std::cerr << "Usage: "<< argv[0] << OPT<< std::endl;
       return -1;
@@ -85,6 +88,7 @@ int main(int argc, char **argv) {
   gspan.conv_epsilon = conv_epsilon;
   gspan.coocitr = coocitr;
   gspan.end_of_cooc = end_of_cooc;
+  gspan.is_nomal = is_nomal;
   if(percent==true){
     gspan.minsup = gspan.gdata.size() * minp * 0.9 /100;
   }
@@ -159,6 +163,7 @@ void Gspan::lpboost(){
     if(itr==coocitr) need_to_cooc=true;
     opt_pat.gain=0.0;//gain init
     opt_pat.size=0;
+    opt_pat.new_node = true;
     opt_pat.locsup.resize(0);
     pattern.resize(0);
     opt_pat.dfscode="";
@@ -289,4 +294,7 @@ void Gspan::lpboost(){
     std::cout << "Margin: " << margin << std::endl;
     std::cout << "Margin Error: " << margin_error << std::endl;
   }
+  //std::cout << "Debug!!" << std::endl;
+  delete [] index; delete [] value;
+  lpx_delete_prob(lp);
 }

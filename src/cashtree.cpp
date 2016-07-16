@@ -65,7 +65,7 @@ void Gspan::cash_tsearch(GraphToTracers& g2tracers,Ctree& node){
     }
   }
 
-  if(fabs(opt_pat.gain)-std::max(upos,uneg)>=-1e-10) {
+  if(fabs(opt_pat.gain)>std::max(upos,uneg)) {
     return;
   }
 
@@ -162,13 +162,10 @@ void Gspan::coocsearch(){
       cooc_tsearch(croot->heap[dcode.labels],**it);
     }
   }
-
-
-
 }
 
 void Gspan::gcalc_tsearch(GraphToTracers& g2tracers,Ctree& node){
-
+  //std::cout <<node.pattern<<std::endl;
   double gain=0.0;
   double upos=0.0;
   double uneg=0.0;
@@ -187,15 +184,16 @@ void Gspan::gcalc_tsearch(GraphToTracers& g2tracers,Ctree& node){
   }
   node.gain = gain;
   node.max_gain = std::max(upos,uneg);
-
-  if(fabs(opt_pat.gain)-node.max_gain>=-1e-10) {
+  if(fabs(opt_pat.gain) > node.max_gain) {
     return;
   }
-
   double gain_abs = fabs(gain);
-  if(gain_abs > fabs(opt_pat.gain) || (fabs(gain_abs - fabs(opt_pat.gain)) < 1e-10 && node.pattern.size() < opt_pat.size)){
+
+  if(gain_abs > fabs(opt_pat.gain) || (fabs(gain_abs - fabs(opt_pat.gain)) < 1e-10 && (node.pattern.size() < opt_pat.size||(node.pattern.size() == opt_pat.size && !(is_nomal) && opt_pat.new_node)))){
+
     opt_pat.gain = gain;
     opt_pat.size = node.pattern.size();
+    opt_pat.new_node = false;
     opt_pat.locsup.clear();
     for(GraphToTracers::iterator it=g2tracers.begin();it!=g2tracers.end();++it){
       opt_pat.locsup.push_back(it->first);
@@ -211,16 +209,18 @@ void Gspan::gcalc_tsearch(GraphToTracers& g2tracers,Ctree& node){
   }
   DFSCode  dcode;
   Pair pkey;
+  
   for(list<Ctree*>::iterator it=node.children.begin();it!=node.children.end();++it){
     dcode = (*it)->pattern[(*it)->pattern.size()-1];
     if(dcode.labels.z == -1){
       pkey.set(dcode.time.b,dcode.labels.y);
-      cash_tsearch(node.b_heap[pkey],**it);
+      gcalc_tsearch(node.b_heap[pkey],**it);
     }else{
       pkey.set(dcode.labels.y,dcode.labels.z);
-      cash_tsearch(node.f_heap[dcode.time.a][pkey],**it);
+      gcalc_tsearch(node.f_heap[dcode.time.a][pkey],**it);
     }
   }
+  
 }
 
 void Gspan::cooc_tsearch(GraphToTracers& g2tracers,Ctree& node){

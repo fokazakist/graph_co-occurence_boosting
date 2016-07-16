@@ -142,6 +142,7 @@ struct DPat{//discrimination pattern
   unsigned int size;
   vector<int> locsup;
   double gain;
+  bool new_node;
 };
 struct CDPat{//co-occurence discrimination pattern
   vector<std::string> dfscode;//include string
@@ -188,6 +189,7 @@ class Gspan {
   unsigned int coocitr;
   double conv_epsilon;
   bool end_of_cooc;
+  bool is_nomal;
   bool can_prune(GraphToTracers&);
   bool can_prune(GraphToTracers&,Ctree&);
   void lpboost();

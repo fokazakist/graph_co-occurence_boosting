@@ -4,11 +4,11 @@ import glob
 import sys 
 
 
-if len(sys.argv) != 2:
-    print 'Usage: # python %s [file*.ev]' % sys.argv[0]
+if len(sys.argv) != 3:
+    print 'Usage: # python %s [file*.ev] 0or1' % sys.argv[0]
     quit() 
 filename = sys.argv[1]
-csv_files = glob.glob(filename)
+csv_files = filename#glob.glob(filename)
 
 gcount=0
 pos=0
@@ -18,9 +18,11 @@ acc=0.0
 pnum=0
 deval  = {}
 dvalue = {}
-print "Read files :",
-for fname in csv_files:
-    print fname,
+#print "Read files :",
+####for fname in csv_files:
+for i in range(1):
+    fname = filename
+    #print fname,
     f = open(fname)
     line = f.readline()
     while line:
@@ -39,7 +41,7 @@ for fname in csv_files:
         gcount = gcount + 1
         line = f.readline()
     f.close()
-print
+#print
 #print dvalue
 
 for k, v in sorted(deval.items(), key=lambda x:x[1], reverse=True):
@@ -47,9 +49,15 @@ for k, v in sorted(deval.items(), key=lambda x:x[1], reverse=True):
         pnum = pnum+1
     else:
         auc = auc + pnum
+if sys.argv[2] =='0':
+    print acc/gcount
+else:
+    print auc/(pos*neg)
 
+"""
 print "All graph :",gcount
 print "positive number :",pos
 print "negative number :",neg
 print "ACC       :",acc/gcount
 print "AUC value :",auc/(pos*neg)
+"""
