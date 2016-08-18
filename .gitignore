@@ -5,3 +5,11 @@ exec.sh*
 model
 split
 tools
+.gitignore~
+Result_cooc/
+Result_gBoost/
+data/cpdb_10cvIT/
+log
+log.txt
+resultc1.txt
+temp.txt
