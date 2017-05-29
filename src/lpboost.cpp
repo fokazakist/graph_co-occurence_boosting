@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   unsigned int coocitr = maxitr;
   bool end_of_cooc = false;
   bool is_nomal = true;
-  clock_t allstart, allend;
+  //clock_t allstart, allend;
 
   while ((opt = getopt(argc, argv, "m:p:w:e:oc:n:x:ia")) != -1) {
     switch (opt) {
@@ -76,12 +76,12 @@ int main(int argc, char **argv) {
     std::cerr << "File not found: " << argv[optind-1] << std::endl;
     return -1;
   }
-  allstart = clock();
   Gspan gspan;
   gspan.wildcard_r = wildcard_num;
   gspan.maxpat = maxpat;
   gspan.out_instances = out_instances;
   gspan.max_itr = maxitr;
+  
   gspan.set_data(graph_file);
   gspan.minsup = minsup;
   gspan.nu = nu;
@@ -93,8 +93,7 @@ int main(int argc, char **argv) {
     gspan.minsup = gspan.gdata.size() * minp * 0.9 /100;
   }
   gspan.lpboost();
-  allend = clock();
-  std::cout << "ALLTIME: " << (double)(allend - allstart)/(double)CLOCKS_PER_SEC << std::endl;
+
   std::cout << "Given options::" << "maxpat: " << maxpat << " minsup: " << minsup << " nu: " << nu << " conv_epsilon: " << conv_epsilon <<"cooc position: "<</*coocitr!=maxitr? coocitr:end_of_cooc?"after conv":"Not cooc"<<*/ " maxitr: " << maxitr << std::endl;
 
   return 0;

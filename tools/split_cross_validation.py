@@ -28,6 +28,7 @@ for i in range(10):
     while line:
         if line[:1]=="t":
             sline=line.split()
+            print sline
             if sline[3]=='1':
                 if pos % 10 == i:
                     tef.write(line)
